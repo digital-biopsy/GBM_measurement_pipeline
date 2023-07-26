@@ -6,7 +6,9 @@ import argparse
 
 # import local dependencies
 sys.path.append(os.path.join(sys.path[0], 'pipeline_modules'))
-from preprocess import ImagePrep
+from image_prep import ImagePrep
+from seg_trainer import SegTrainer
+
 
 # # import global packages
 # import pathlib
@@ -156,24 +158,37 @@ if __name__ == '__main__':
     parser.add_argument('-prep',
                         metavar='dataset_name',
                         type=str,
-                        help='the name of the dataset to be preprocessed `all` or `dataset_name`',
-                        required=True)
+                        help='preprocess images, enter `all` or `dataset_name`')
     parser.add_argument('-v', default=False, action='store_true', help='verbose output')
-    # parser.add_argument('-train', '--init_train', action='store_true', help='train and initialize model')
-    # parser.add_argument('-kfold', '--kfold', action='store_true', help='train using kfold cross-validation')
-    # # parser.add_argument('-c', '--cont_train', action='store_true', help='continue training')
-    # # parser.add_argument('--integers', type=str, help='epoch num to continue training')
-    # parser.add_argument('-pred', '--predict', action='store_true', help='predict output')
-    # parser.add_argument('-eval', '--evaluation', action='store_true', help='evaluate the model')
-    # parser.add_argument('-save', '--savepred', action='store_true', help='save prediction results the model')
+    parser.add_argument('-train',
+                        metavar='dataset_name',
+                        type=str,
+                        help='train model, `dataset_name`')
+    parser.add_argument('-kfold',
+                        metavar='num_folds',
+                        type=int,
+                        help='number of folds for k-fold cross-validation')
     args = parser.parse_args()
 
     if args.prep:
-        prep = ImagePrep(
+        ImagePrep(
             dataset=args.prep,
-            verbose=args.v,
+            verbose=args.v if args.v else False,
             **params)
-        prep.preprocess()
+    elif args.train:
+        SegTrainer(
+            dataset=args.train,
+            kfold=args.kfold if args.kfold else 1,
+            verbose=args.v if args.v else False,
+            **params)
+    else:
+        print('Please input valid arguments.')
+
+
+    # parser.add_argument('-pred', '--predict', action='store_true', help='predict output')
+    # parser.add_argument('-eval', '--evaluation', action='store_true', help='evaluate the model')
+    # parser.add_argument('-save', '--savepred', action='store_true', help='save prediction results the model')
+        
     # elif args.kfold:
     #     callback = k_fold
     #     arg = args.verbose

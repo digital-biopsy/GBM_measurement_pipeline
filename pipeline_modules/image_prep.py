@@ -5,23 +5,23 @@ import shutil
 import pandas as pd
 from termcolor import colored
 
-class ImagePrep:
+class ImagePrep():
     def __init__(self, 
                  datapath, 
                  dataset,
                  sliding_step, 
                  tile_size,
-                 downsample_factor = 1,
-                 verbose = False, 
+                 verbose,
                  **kwargs):
-        self.verb = verbose
         self.datapath = datapath
         self.dataset = dataset
         self.tile_size = tile_size
         self.sliding_step = sliding_step
-        self.downsample_factor = downsample_factor
+        self.verb = verbose
+        self.downsample_factor = kwargs.get('downsample_factor', 2)
         
         self._check_params()
+        self._preprocess()
 
 
     def _check_params(self):
@@ -46,7 +46,7 @@ class ImagePrep:
         assert isinstance(self.downsample_factor, int), 'Downsample factor must be an integer.'
 
 
-    def preprocess(self):        
+    def _preprocess(self):        
         """
         Main function to preprocess images.
         """
