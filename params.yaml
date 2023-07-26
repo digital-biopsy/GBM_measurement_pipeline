@@ -1,0 +1,8 @@
+### Parameters for the pipeline
+# ===============================================
+# Preprocessing parameters
+datapath: /Users/zhaoze/Datasets/digital-biopsy/
+downsample_factor: 2
+sliding_step: 512 # pixels
+tile_size: 512 # pixels
+# ===============================================
