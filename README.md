@@ -1,25 +1,81 @@
-# Kidney_image
-This is the segmentation tool for digital biopsy project. It also contains some useful git command instructions for the reference.
+# Digital Biopsy Pipeline
+This is an automated TEM image measurement pipeline for Glomerular Basement Membrane width (GBMW) and Foot Processes width (FPW). The detailed method is published on bioRxiv: [to be added]. <br>
+<p align="center"><img src="./imgs/demo.png" width="550"></p>
 
-## Raw Dataset
-### Dataset Structure
-The data structure of the raw dataset is approx. as follows: </br>
-|-folderpath/ </br>
-|---stats.csv </br>
-|---inputs/ </br>
-|-----img-name-1.jpg </br>
-|-----img-name-2.jpg </br>
-|---labels/ </br>
-|-----img-name-1-GBMlabels.png </br>
-|-----img-name-2-GBMlabels.png.jpg </br>
+## Installation
+### Prepare the environment (optional but recommended)
+It is recommended to install the package dependencies in an [Anaconda](https://www.anaconda.com/products/individual) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) environment. To install, checkout the official installation guide for [Anaconda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) and [Miniconda](https://docs.conda.io/en/latest/miniconda.html#installing).
+- Create a conda environment
+    ```
+    conda create -n digital-biopsy python=3.8
+    ```
+- Activate the environment
+    ```
+    conda activate digital-biopsy
+    ```
+- Deactivate the environment
+    ```
+    conda deactivate
+    ```
+### Install the dependencies
+```
+pip install -r requirements.txt
+```
 
-### Image name and explanations
-- The raw images are stored in the folder inputs, while corresponding labels where stored under the labels folder.
-- The label name must be exact match of the input name and append a "-GBMlabels" to the end.
-- The root path of the raw dataset is stored in the dict DATASET, which can be changed in project_root/params_meta.py.
+## Run the code
+Configuring this pipeline primarily involves two part of the settings:
+- Arguments parsed from the command line: these arguments primarily control what task to perform, e.g. preprocessing, segmentation, measurement, evaluation, etc.
+- Parameters defined in `params.yaml`: these parameters primarily control the hyperparameters of the model, e.g. how to tile the image, training parameters, and some constants of the input images (pixel/nm ratio) etc.
 
-## arg '-v
-Verbosely print currently training process, helpful for debugging.
+## Arguments syntax
+```
+python main.py [-h] [-prep [DATASET]] [-i] [-v]
+```
+### Task arguments
+These arguments control what task to perform. They are mutually exclusive, meaning only one of them can be used at a time.
+`-prep`: 
+    Preprocess the dataset. This will perform the image cropping, image shuffling, and subject-wise k-fold cross validation (CV). As the data stored in the 'stats.csv' is performed by multiple operators and lacks format consistency, it will also performed the corner case handling to exclude the data that does not contain a desired stats entry (GBMW or FPW etc.) <br>
+### Other arguments
+`-v`: Verbosely print currently training process, helpful for debugging.
+#### Prepare the dataset
+##### args
+To load the image to the UNet as well as the pipeline, it needed to be pre-processed (cropped) into smaller image patches. This can be done by running the following command. This command will automatically create a folder named `data/` under the project root directory if there is not one, and store the pre-processed data in it. <br>
+This argument requires an additional parameter which is the `<name of the dataset>` or `all`, which will specify which folder (dataset) to preprocess under the datapath. The image processing pipeline requires a specific structure of the data. See [Dataset structures](#dataset-structures) for more details.
+```
+python main.py -prep [dataset name]
+```
+##### Related params
+| Parameter           | Default          | Required     | Description                                    |
+| ------------------- | ---------------- | -------------| ---------------------------------------------- |
+| `datapath`          | `data/`          | yes          | The path to the dataset.                       |
+| `downsample_factor` | 2                | no           | The downsample factor of the image. Namely, how many pixels are averaged into one pixel on each dimension. E.g. 2 means 4 pixels are averaged into one pixel. |
+| `tile_size`         | 512              | no           | The size of the image patch. (width = height)  |
+####
+
+
+## `params.yaml`
+
+
+## Dataset structures
+For raw data, we requires it to be stored in the following structure.
+```
+|-datapath/ </br>
+|---dataset/ </br>
+|-----stats.csv </br>
+|-----inputs/ </br>
+|-------img-name-1.jpg </br>
+|-------img-name-2.jpg </br>
+|------- ... </br>
+|-----labels/ </br>
+|-------img-name-1.png </br>
+|-------img-name-2.png </br>
+|------- ... </br>
+```
+`datapath` is the root directory of all datasets, we designed in following way as the mice biopsy data could be sampled from different mice or different time points. It will be easier to manage the data if we store them in different `dataset` folders. In each `dataset` folder, three component is required: 1. `inputs` is the folder that contains all the raw images. 2. `labels` is the folder that contains all the labels. The label name must be exact match of the input name. 3. [Optional:] the `stats.csv` file that contains the 'expert' measurement of the dataset. If the directory does not contain the `stats.csv` file, the program will not be able to perform the measurement evaluation. <br>
+In the above example, the part 'img-name-1' could be replaced by arbitrary string, as long as there's a corresponding label with the same name in the `labels` folder. <br>
+**NOTE**: All names must be unique, otherwise the program will overwrite the existing file with the same name and cause unexpected behavior.
+
+
 ## arg '-prep'
 This argument will pre-process the image. It will perform the image cropping, image shuffling, and subject-wise k-fold cross validation (CV). As the data stored in the 'stats.csv' is performed by multiple operators and lacks format consistency, it will also performed the corner case handling to exclude the data that does not contain a desired stats entry (GBMW or FPW etc.)
 ### Related params (params_meta.py)
@@ -105,10 +161,7 @@ Github might prompt user to enter their token before access the repository. Setu
 Creating a branch helps users to commit changes that haven't been fully tested.
 1. Create a branch in local repository.
 ```
-git branch checkout -b <your branch name>
-```
-```
-git branch checkout -b dependency-fix
+git checkout -b <your branch name>
 ```
 2. Push to the remote branch
 Creating a branch locally would not chage the remote repository. The below command can push the new local branch to remote.

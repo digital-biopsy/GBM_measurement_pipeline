@@ -1,0 +1,16 @@
+# Preprocessing parameters
+# ===============================================
+datapath: /Users/zhaoze/Datasets/digital-biopsy/
+downsample_factor: 2
+sliding_step: 512 # pixels
+tile_size: 512 # pixels
+# ===============================================
+
+
+# Training parameters
+# ===============================================
+split_ratio: 0.8
+batch_size: 32
+epochs: 100
+learning_rate: 0.0001
+# ===============================================
