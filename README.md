@@ -4,7 +4,7 @@ This is an automated TEM image measurement pipeline for Glomerular Basement Memb
 
 The UNet segmentation code is adapted from [here](https://github.com/johschmidt42/PyTorch-2D-3D-UNet-Tutorial)
 
-The deprecated version of this project can be found [here](https://github.com/digital-biopsy/GBM_measurement_pipeline.git)
+The deprecated version of this project can be found [here](https://github.com/digital-biopsy/GBM_measurement_pipeline_deprecated.git)
 
 ## Installation
 ### Prepare the environment (optional but recommended)
