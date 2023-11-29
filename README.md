@@ -1,10 +1,16 @@
 # Digital Biopsy Pipeline
 This is an automated TEM image measurement pipeline for Glomerular Basement Membrane Width (GBMW) and Foot Processes width (FPW).
+
 <p align="center"><img src="./imgs/demo.png" width="550"></p>
 
 The UNet segmentation code is adapted from [here](https://github.com/johschmidt42/PyTorch-2D-3D-UNet-Tutorial)
 
 The deprecated version of this project can be found [here](https://github.com/digital-biopsy/GBM_measurement_pipeline_deprecated.git)
+
+## Acknowledgements
+This project is part of Boston University Bioengineering Senior Thesis 2022. We thank the invaluable help provided by our principal investigators: Dr. Weining, Lu; Dr. Joel M. Henderson; and Dr. Vijaya B. Kolachalama. The abstract has been admitted to [ASN Kidney Week Abstract 2022](https://www.asn-online.org/education/kidneyweek/2022/program-abstract.aspx?controlId=3766852)
+
+Zhaoze Wang and Aksel Laudon developed the machine learning model. Aksel Laudon, Connor Kim, Yingzhe Qian, and Qin Ye developed the image processing algorithms and annotated the GBM labels. Aksel Laudon provided statistical analysis. Weining Lu provided the TEM images.
 
 ## Installation
 ### Prepare the environment (optional but recommended)
